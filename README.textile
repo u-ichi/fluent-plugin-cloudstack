@@ -1,0 +1,83 @@
+h1. Fluent::Plugin::CloudStack
+
+Fluentd input plugin to get usages and events from CloudStack API.
+
+* usages
+** instance_usage
+** memory_usage
+** root_volume_usage
+** data_volume_usage
+** usages_per_service_offering
+** usages_per_disk_offering
+* event
+
+
+h2. Installation
+
+Add this line to your application's Gemfile:
+
+<pre>
+gem 'fluent-plugin-cloudstack'
+</pre>
+
+Or install it yourself as:
+
+<pre>
+$ gem install fluent-plugin-cloudstack
+</pre>
+
+Or use td-agent : (on Ubuntu12.04)
+
+<pre>
+$ sudo /usr/lib/fluent/ruby/bin/fluent-gem install fluent-plugin-cloudstack
+</pre>
+
+
+
+h2. Configuration
+
+<pre>
+<source>
+  type cloudstack
+  host $cloudtack_host
+  apikey $cloudstack_apikey
+  secretkey $cloustack_secretkey
+
+  # optional
+  protocol $cloudstack_protocol_scheme # https or http, default https
+  path $cloudstack_path                # default /client/api
+  port $cloudstack_port                # default 443
+  interval $get_interval_sec           # min 300, default 300
+  ssl $cloudtack_api_ssl               # true or false, default true
+  domain_id $cloudstack_domain_id
+
+  tag $fluentd_tag                     # default cloudstack
+</source>
+</pre>
+
+
+
+h2. Data Example
+
+<pre>
+20130507T041336+0000    cloudstack.event       {"id":"xxxxxxx-4e64-4fa5-8045-5ecffb7e2417",
+                                                "username":"clnxxxxxxxxx",
+                                                "type":"USER.LOGIN",
+                                                "level":"INFO",
+                                                "description":"user has logged in from IP Address xxx.xxx.xxx.xxx",
+                                                "account":"clnxxxxxxx",
+                                                "domainid":"xxxxxxxx-dcc3-486b-90e8-02c514c93d1f",
+                                                "domain":"cln10000004",
+                                                "created":"2013-05-07T13:13:36+0900",
+                                                "state":"Completed",
+                                                "parentid":"0"}
+
+20131027T202108+0000    cloudstack.usages.vm_usage      1
+20131027T202108+0000    cloudstack.usages.memory_usage  512
+20131027T202108+0000    cloudstack.usages.cpu_usage     1
+20131027T202108+0000    cloudstack.usages.root_volume_usage     16106127360
+20131027T202108+0000    cloudstack.usages.data_volume_usage     42949672960
+20131027T202108+0000    cloudstack.usages.usages_per_service_offering.t1.micro          1
+20131027T202108+0000    cloudstack.usages.usages_per_disk_offering.Datadisk_40GB        1
+</pre>
+
