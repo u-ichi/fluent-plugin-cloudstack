@@ -72,12 +72,13 @@ h2. Data Example
                                                 "state":"Completed",
                                                 "parentid":"0"}
 
-20131027T202108+0000    cloudstack.usages.vm_usage      1
-20131027T202108+0000    cloudstack.usages.memory_usage  512
-20131027T202108+0000    cloudstack.usages.cpu_usage     1
-20131027T202108+0000    cloudstack.usages.root_volume_usage     16106127360
-20131027T202108+0000    cloudstack.usages.data_volume_usage     42949672960
-20131027T202108+0000    cloudstack.usages.usages_per_service_offering.t1.micro          1
-20131027T202108+0000    cloudstack.usages.usages_per_disk_offering.Datadisk_40GB        1
+20131028T133511+0000    cloudstack.usages       {"vm_usage":1,
+                                                 "memory_usage":512,
+                                                 "cpu_usage":1,
+                                                 "root_volume_usage":16106127360,
+                                                 "data_volume_usage":42949672960,
+                                                 "t1.micro":1,
+                                                 "Datadisk_40GB":1}
+
 </pre>
 

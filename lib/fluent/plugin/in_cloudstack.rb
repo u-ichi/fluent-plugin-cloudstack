@@ -2,7 +2,7 @@ module Fluent
   class CloudStackInput < Input
     Fluent::Plugin.register_input("cloudstack", self)
 
-    INTERVAL_MIN = 300
+    INTERVAL_MIN = 10
 
     config_param :host
     config_param :path, :default =>'/client/api'
@@ -80,15 +80,7 @@ module Fluent
       usages = get_usages
       time = Engine.now
       output_tag = "#{@tag}.usages"
-      usages.each do |key, value|
-        if value.class == Hash
-          value.each do |key2, value2|
-            Engine.emit("#{output_tag}.#{key}.#{key2}", time, value2)
-          end
-        else
-          Engine.emit("#{output_tag}.#{key}", time, value)
-        end
-      end
+      Engine.emit("#{output_tag}", time, usages)
     end
 
     def get_new_events
@@ -123,32 +115,45 @@ module Fluent
 
       vms_responses = cs.list_virtual_machines(:domainid=>@domain_id)
       vms =  vms_responses["listvirtualmachinesresponse"]["virtualmachine"]
-      vms.each do |vm|
-        memory_usage += vm["memory"].to_i
-        cpu_usage += vm["cpunumber"].to_i
-        usages_per_service_offering[vm["serviceofferingname"]] += 1
+
+      if vms
+        vms.each do |vm|
+          memory_usage += vm["memory"].to_i
+          cpu_usage += vm["cpunumber"].to_i
+          usages_per_service_offering[vm["serviceofferingname"]] += 1
+        end
       end
 
       volumes_responses = cs.list_volumes(:domainid=>@domain_id)
       volumes =  volumes_responses["listvolumesresponse"]["volume"]
-      volumes.each do |volume|
-        case volume["type"]
-        when "ROOT"
-          root_volume_usage += volume["size"]
-        when "DATADISK"
-          data_volume_usage += volume["size"]
-          usages_per_disk_offering[volume["diskofferingname"].gsub(' ','_')] += 1
+
+      if volumes
+        volumes.each do |volume|
+          case volume["type"]
+          when "ROOT"
+            root_volume_usage += volume["size"]
+          when "DATADISK"
+            data_volume_usage += volume["size"]
+            usages_per_disk_offering[volume["diskofferingname"].gsub(' ','_')] += 1
+          end
         end
       end
 
-      results =  {:vm_usage             => vms.size,
+      results =  {:vm_usage                    => vms.size,
                   :memory_usage                => memory_usage,
                   :cpu_usage                   => cpu_usage,
                   :root_volume_usage           => root_volume_usage,
                   :data_volume_usage           => data_volume_usage,
-                  :usages_per_service_offering => usages_per_service_offering,
-                  :usages_per_disk_offering    => usages_per_disk_offering,
       }
+
+      usages_per_service_offering.each do |key,value|
+        results[key] = value
+      end
+      usages_per_disk_offering.each do |key,value|
+        results[key] = value
+      end
+
+      results
     end
 
     def cs
