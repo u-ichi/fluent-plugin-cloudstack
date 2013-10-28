@@ -28,6 +28,7 @@ module Fluent
 
     def configure(conf)
       super
+
       @conf = conf
       unless @host && @apikey && @secretkey
         raise ConfigError, "'host' and 'apikey' and 'secretkey' must be all specified."
@@ -47,6 +48,7 @@ module Fluent
 
       @event_output_tag = "#{@tag}.event"
       @usages_output_tag = "#{@tag}.usages"
+
     end
 
     def start
@@ -119,7 +121,7 @@ module Fluent
 
       if vms
         vms.each do |vm|
-          memory_sum += vm["memory"].to_i
+          memory_sum += vm["memory"].to_i * 1024 * 1024
           cpu_sum += vm["cpunumber"].to_i
           usages_per_service_offering[vm["serviceofferingname"]] += 1
         end
