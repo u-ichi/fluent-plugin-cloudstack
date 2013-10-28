@@ -10,6 +10,8 @@ Fluentd input plugin to get usages and events from CloudStack API.
 ** usages_per_service_offering
 ** usages_per_disk_offering
 * event
+** event_log
+** event_flow(per interval)
 
 
 h2. Installation
@@ -60,25 +62,26 @@ h2. Configuration
 h2. Data Example
 
 <pre>
-20130507T041336+0000    cloudstack.event       {"id":"xxxxxxx-4e64-4fa5-8045-5ecffb7e2417",
-                                                "username":"clnxxxxxxxxx",
-                                                "type":"USER.LOGIN",
-                                                "level":"INFO",
-                                                "description":"user has logged in from IP Address xxx.xxx.xxx.xxx",
-                                                "account":"clnxxxxxxx",
-                                                "domainid":"xxxxxxxx-dcc3-486b-90e8-02c514c93d1f",
-                                                "domain":"cln10000004",
-                                                "created":"2013-05-07T13:13:36+0900",
-                                                "state":"Completed",
-                                                "parentid":"0"}
+20130507T041336+0000    cloudstack.event        {"id":"xxxxxxx-4e64-4fa5-8045-5ecffb7e2417",
+                                                 "username":"clnxxxxxxxxx",
+                                                 "type":"USER.LOGIN",
+                                                 "level":"INFO",
+                                                 "description":"user has logged in from IP Address xxx.xxx.xxx.xxx",
+                                                 "account":"clnxxxxxxx",
+                                                 "domainid":"xxxxxxxx-dcc3-486b-90e8-02c514c93d1f",
+                                                 "domain":"cln10000004",
+                                                 "created":"2013-05-07T13:13:36+0900",
+                                                 "state":"Completed",
+                                                 "parentid":"0"}
 
-20131028T133511+0000    cloudstack.usages       {"vm_usage":1,
-                                                 "memory_usage":512,
-                                                 "cpu_usage":1,
-                                                 "root_volume_usage":16106127360,
-                                                 "data_volume_usage":42949672960,
+20131028T133511+0000    cloudstack.usages       {"vm_sum":1,
+                                                 "memory_sum":512,
+                                                 "cpu_sum":1,
+                                                 "root_volume_sum":16106127360,
+                                                 "data_volume_sum":42949672960,
                                                  "t1.micro":1,
                                                  "Datadisk_40GB":1}
+20131028T133511+0000    cloudstack.usages       {"event_flow":5}
 
 </pre>
 

@@ -2,7 +2,7 @@ module Fluent
   class CloudStackInput < Input
     Fluent::Plugin.register_input("cloudstack", self)
 
-    INTERVAL_MIN = 10
+    INTERVAL_MIN = 300
 
     config_param :host
     config_param :path, :default =>'/client/api'
@@ -23,14 +23,6 @@ module Fluent
       require "eventmachine"
       init_eventmachine
 
-      @before_events_filepath = "logs/before_events.yml"
-
-      if File.exist?(@before_events_filepath)
-        @before_events = YAML.load_file(@before_events_filepath)
-      else
-        @before_events = nil
-      end
-
       super
     end
 
@@ -44,6 +36,17 @@ module Fluent
       if @interval < INTERVAL_MIN
         raise ConfigError, "'interval' must be over #{INTERVAL_MIN}."
       end
+
+      @before_events_filepath = "logs/before_events.yml"
+
+      if File.exist?(@before_events_filepath)
+        @before_events = YAML.load_file(@before_events_filepath)
+      else
+        @before_events = nil
+      end
+
+      @event_output_tag = "#{@tag}.event"
+      @usages_output_tag = "#{@tag}.usages"
     end
 
     def start
@@ -69,18 +72,16 @@ module Fluent
 
     def emit_new_events
       new_events = get_new_events
-      output_tag = "#{@tag}.event"
       new_events.each do |event|
         time = Time.parse(event["created"]).to_i
-        Engine.emit(output_tag, time, event)
+        Engine.emit(@event_output_tag, time, event)
       end
+
+      Engine.emit("#{@usages_output_tag}", Engine.now, {"events_flow" => new_events.size})
     end
 
     def emit_usages
-      usages = get_usages
-      time = Engine.now
-      output_tag = "#{@tag}.usages"
-      Engine.emit("#{output_tag}", time, usages)
+      Engine.emit("#{@usages_output_tag}", Engine.now, get_usages)
     end
 
     def get_new_events
@@ -108,18 +109,18 @@ module Fluent
     def get_usages
       usages_per_service_offering   = Hash.new(0)
       usages_per_disk_offering      = Hash.new(0)
-      memory_usage      = 0
-      cpu_usage         = 0
-      root_volume_usage = 0
-      data_volume_usage = 0
+      memory_sum      = 0
+      cpu_sum         = 0
+      root_volume_sum = 0
+      data_volume_sum = 0
 
       vms_responses = cs.list_virtual_machines(:domainid=>@domain_id)
       vms =  vms_responses["listvirtualmachinesresponse"]["virtualmachine"]
 
       if vms
         vms.each do |vm|
-          memory_usage += vm["memory"].to_i
-          cpu_usage += vm["cpunumber"].to_i
+          memory_sum += vm["memory"].to_i
+          cpu_sum += vm["cpunumber"].to_i
           usages_per_service_offering[vm["serviceofferingname"]] += 1
         end
       end
@@ -131,19 +132,19 @@ module Fluent
         volumes.each do |volume|
           case volume["type"]
           when "ROOT"
-            root_volume_usage += volume["size"]
+            root_volume_sum += volume["size"]
           when "DATADISK"
-            data_volume_usage += volume["size"]
+            data_volume_sum += volume["size"]
             usages_per_disk_offering[volume["diskofferingname"].gsub(' ','_')] += 1
           end
         end
       end
 
-      results =  {:vm_usage                    => vms.size,
-                  :memory_usage                => memory_usage,
-                  :cpu_usage                   => cpu_usage,
-                  :root_volume_usage           => root_volume_usage,
-                  :data_volume_usage           => data_volume_usage,
+      results =  {:vm_sum                    => vms.size,
+                  :memory_sum                => memory_sum,
+                  :cpu_sum                   => cpu_sum,
+                  :root_volume_sum           => root_volume_sum,
+                  :data_volume_sum           => data_volume_sum,
       }
 
       usages_per_service_offering.each do |key,value|
