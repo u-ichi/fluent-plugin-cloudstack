@@ -125,6 +125,8 @@ module Fluent
           cpu_sum += vm["cpunumber"].to_i
           usages_per_service_offering[vm["serviceofferingname"]] += 1
         end
+      else
+        vms = []
       end
 
       volumes_responses = cs.list_volumes(:domainid=>@domain_id)
@@ -140,6 +142,8 @@ module Fluent
             usages_per_disk_offering[volume["diskofferingname"].gsub(' ','_')] += 1
           end
         end
+      else
+        volumes = []
       end
 
       results =  {:vm_sum                    => vms.size,
