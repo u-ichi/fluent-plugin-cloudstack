@@ -3,10 +3,10 @@ h1. Fluent::Plugin::CloudStack
 Fluentd input plugin to get usages and events from CloudStack API.
 
 * usages
-** instance_usage
-** memory_usage
-** root_volume_usage
-** data_volume_usage
+** instance_sum
+** memory_sum
+** root_volume_sum
+** data_volume_sum
 ** usages_per_service_offering
 ** usages_per_disk_offering
 * event
@@ -75,8 +75,8 @@ h2. Data Example
                                                  "parentid":"0"}
 
 20131028T133511+0000    cloudstack.usages       {"vm_sum":1,
-                                                 "memory_sum":512,
                                                  "cpu_sum":1,
+                                                 "memory_sum":536870912,
                                                  "root_volume_sum":16106127360,
                                                  "data_volume_sum":42949672960,
                                                  "t1.micro":1,
