@@ -58,6 +58,10 @@ h2. Configuration
 </pre>
 
 
+h2. Usage Sample
+
+https://github.com/u-ichi/fluent-plugin-cloudstack-sample
+
 
 h2. Data Example
 
