@@ -7,8 +7,8 @@ Gem::Specification.new do |gem|
   gem.authors     = ["Yuichi UEMURA"]
   gem.email       = ["yuichi.u@gmail.com"]
   gem.homepage    = "https://github.com/u-ichi/fluent-plugin-cloudstack"
-  gem.summary     = %q{cloudstack plugin for fluentd, a log collector}
-  gem.description = %q{cloudstack plugin for fluentd, a log collector}
+  gem.summary     = %q{Fluentd input plugin to get usages and events from CloudStack API}
+  gem.description = %q{Fluentd input plugin to get usages and events from CloudStack API}
 
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

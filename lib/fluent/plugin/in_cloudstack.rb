@@ -46,6 +46,13 @@ module Fluent
         @before_events = nil
       end
 
+      @before_usages_filepath = "logs/before_usages.yml"
+      if File.exist?(@before_usages_filepath)
+        @before_usages = YAML.load_file(@before_usages_filepath)
+      else
+        @before_usages = Hash.new
+      end
+
       @event_output_tag = "#{@tag}.event"
       @usages_output_tag = "#{@tag}.usages"
 
@@ -142,25 +149,27 @@ module Fluent
             usages_per_disk_offering[volume["diskofferingname"].gsub(' ','_')] += 1
           end
         end
-      else
-        volumes = []
       end
 
-      results =  {:vm_sum                    => vms.size,
-                  :memory_sum                => memory_sum,
-                  :cpu_sum                   => cpu_sum,
-                  :root_volume_sum           => root_volume_sum,
-                  :data_volume_sum           => data_volume_sum,
-      }
+      usages = @before_usages
+
+      usages[:vm_sum]          = vms.size
+      usages[:memory_sum]      = memory_sum
+      usages[:cpu_sum]         = cpu_sum
+      usages[:root_volume_sum] = root_volume_sum
+      usages[:data_volume_sum] = data_volume_sum
 
       usages_per_service_offering.each do |key,value|
-        results[key] = value
+        usages[key] = value
       end
       usages_per_disk_offering.each do |key,value|
-        results[key] = value
+        usages[key] = value
       end
 
-      results
+      File.write(@before_usages_filepath, usages.to_yaml)
+      @before_usages = usages
+
+      usages
     end
 
     def cs
