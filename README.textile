@@ -49,11 +49,13 @@ h2. Configuration
   protocol $cloudstack_protocol_scheme # https or http, default https
   path $cloudstack_path                # default /client/api
   port $cloudstack_port                # default 443
-  interval $get_interval_sec           # min 300, default 300
+  interval $get_interval_sec           # default 300, min 300(exclude debug_mode)
   ssl $cloudtack_api_ssl               # true or false, default true
   domain_id $cloudstack_domain_id
-
   tag $fluentd_tag                     # default cloudstack
+
+  # debug mode
+  debug_mode $boolean                  # default false
 </source>
 </pre>
 
