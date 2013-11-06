@@ -15,6 +15,7 @@ module Fluent
 
     config_param :tag, :string, :default => "cloudstack"
     config_param :ssl, :bool, :default => true
+    config_param :debug_mode, :bool, :default => false
 
     attr_writer :before_events
 
@@ -30,12 +31,15 @@ module Fluent
       super
 
       @conf = conf
+
       unless @host && @apikey && @secretkey
         raise ConfigError, "'host' and 'apikey' and 'secretkey' must be all specified."
       end
 
-      if @interval < INTERVAL_MIN
-        raise ConfigError, "'interval' must be over #{INTERVAL_MIN}."
+      unless @debug_mode
+        if @interval.to_i < INTERVAL_MIN
+          raise ConfigError, "'interval' must be over #{INTERVAL_MIN}."
+        end
       end
 
       @before_events_filepath = "logs/before_events.yml"
