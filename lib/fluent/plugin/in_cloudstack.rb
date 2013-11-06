@@ -5,17 +5,17 @@ module Fluent
     INTERVAL_MIN = 300
 
     config_param :host
-    config_param :path, :default =>'/client/api'
-    config_param :protocol, :default =>'https'
-    config_param :port, :default =>443
     config_param :apikey
     config_param :secretkey
-    config_param :domain_id, :default => nil
-    config_param :interval, :default => INTERVAL_MIN
 
-    config_param :tag, :string, :default => "cloudstack"
-    config_param :ssl, :bool, :default => true
-    config_param :debug_mode, :bool, :default => false
+    config_param :path,        :default => '/client/api'
+    config_param :protocol,    :default => 'https'
+    config_param :port,        :default => 443
+    config_param :domain_id,   :default => nil
+    config_param :tag,         :default => "cloudstack"
+    config_param :ssl,         :default => true
+    config_param :debug_mode,  :default => false
+    config_param :interval,    :default => INTERVAL_MIN
 
     attr_writer :before_events
 
