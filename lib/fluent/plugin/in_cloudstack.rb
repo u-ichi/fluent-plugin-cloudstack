@@ -190,7 +190,7 @@ module Fluent
     end
 
     def cs
-      @@cs ||= Fog::Compute.new(
+      @cs ||= Fog::Compute.new(
           :provider => 'CloudStack',
           :cloudstack_api_key           => @apikey,
           :cloudstack_secret_access_key => @secretkey,
