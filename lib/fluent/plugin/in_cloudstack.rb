@@ -42,7 +42,7 @@ module Fluent
         end
       end
 
-      @before_events_filepath = "logs/before_events.yml"
+      @before_events_filepath = "logs/before_events.#{tag}.yml"
 
       if File.exist?(@before_events_filepath)
         @before_events = YAML.load_file(@before_events_filepath)
@@ -50,7 +50,7 @@ module Fluent
         @before_events = nil
       end
 
-      @before_usages_filepath = "logs/before_usages.yml"
+      @before_usages_filepath = "logs/before_usages.#{tag}.yml"
       if File.exist?(@before_usages_filepath)
         @before_usages = YAML.load_file(@before_usages_filepath)
       else
@@ -99,6 +99,8 @@ module Fluent
     end
 
     def emit_usages
+      usages = get_usages
+
       Engine.emit("#{@usages_output_tag}", Engine.now, get_usages)
     end
 
@@ -160,7 +162,7 @@ module Fluent
         end
       end
 
-      usages = @before_usages
+      usages = Hash.new
 
       usages[:vm_sum]          = vms.size
       usages[:memory_sum]      = memory_sum
@@ -173,6 +175,12 @@ module Fluent
       end
       usages_per_disk_offering.each do |key,value|
         usages[key] = value
+      end
+
+      @before_usages.each do |key,value|
+        unless usages.key?(key)
+          usages[key] = 0
+        end
       end
 
       File.write(@before_usages_filepath, usages.to_yaml)
