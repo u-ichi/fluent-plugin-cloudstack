@@ -78,8 +78,13 @@ module Fluent
 
     def run
       EM.add_periodic_timer(@interval) do
-        emit_new_events
-        emit_usages
+        begin
+          emit_new_events
+          emit_usages
+        rescue => ex
+          $log.warn("EM.periodic_timer loop error.")
+          $log.warn("#{ex}, tracelog : \n#{ex.backtrace.join("\n")}")
+        end
       end
     end
 
@@ -199,8 +204,8 @@ module Fluent
     def init_eventmachine
       EM.epoll; EM.kqueue
       EM.error_handler do |ex|
-        $log.error("Eventmachine problem")
-        $log.error("#{ex}, tracelog : \n#{ex.backtrace.join("\n")}")
+        $log.fatal("Eventmachine problem")
+        $log.fatal("#{ex}, tracelog : \n#{ex.backtrace.join("\n")}")
       end
     end
   end
