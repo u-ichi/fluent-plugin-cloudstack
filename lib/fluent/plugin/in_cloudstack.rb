@@ -2,6 +2,11 @@ module Fluent
   class CloudStackInput < Input
     Fluent::Plugin.register_input("cloudstack", self)
 
+    # To support log_level option implemented by Fluentd v0.10.43
+    unless method_defined?(:log)
+      define_method("log") { $log }
+    end
+
     INTERVAL_MIN = 300
 
     config_param :host
@@ -67,7 +72,7 @@ module Fluent
       super
       run_reactor_thread
       @thread = Thread.new(&method(:run))
-      $log.info "listening cloudstack api on #{@host}"
+      log.info "listening cloudstack api on #{@host}"
     end
 
     def shutdown
@@ -83,8 +88,8 @@ module Fluent
           emit_new_events
           emit_usages
         rescue => ex
-          $log.warn("EM.periodic_timer loop error.")
-          $log.warn("#{ex}, tracelog : \n#{ex.backtrace.join("\n")}")
+          log.warn("EM.periodic_timer loop error.")
+          log.warn("#{ex}, tracelog : \n#{ex.backtrace.join("\n")}")
         end
       end
     end
@@ -213,8 +218,8 @@ module Fluent
     def init_eventmachine
       EM.epoll; EM.kqueue
       EM.error_handler do |ex|
-        $log.fatal("Eventmachine problem")
-        $log.fatal("#{ex}, tracelog : \n#{ex.backtrace.join("\n")}")
+        log.fatal("Eventmachine problem")
+        log.fatal("#{ex}, tracelog : \n#{ex.backtrace.join("\n")}")
       end
     end
   end
