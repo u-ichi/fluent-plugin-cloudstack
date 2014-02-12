@@ -53,6 +53,7 @@ h2. Configuration
   ssl $cloudtack_api_ssl               # true or false, default true
   domain_id $cloudstack_domain_id
   tag $fluentd_tag                     # default cloudstack
+  log_dir $fluentd_log_dir             # default /var/log/td_agent
 
   # debug mode
   debug_mode $boolean                  # default false
