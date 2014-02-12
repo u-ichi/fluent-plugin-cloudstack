@@ -15,6 +15,7 @@ module Fluent
     config_param :tag,         :default => "cloudstack"
     config_param :ssl,         :default => true
     config_param :debug_mode,  :default => false
+    config_param :log_dir,     :default => '/var/log/td_agent'
     config_param :interval,    :default => INTERVAL_MIN
 
     attr_writer :before_events
@@ -42,7 +43,7 @@ module Fluent
         end
       end
 
-      @before_events_filepath = "logs/before_events.#{tag}.yml"
+      @before_events_filepath = "#{@log_dir}/before_events.#{tag}.yml"
 
       if File.exist?(@before_events_filepath)
         @before_events = YAML.load_file(@before_events_filepath)
@@ -50,7 +51,7 @@ module Fluent
         @before_events = nil
       end
 
-      @before_usages_filepath = "logs/before_usages.#{tag}.yml"
+      @before_usages_filepath = "#{@log_dir}/before_usages.#{tag}.yml"
       if File.exist?(@before_usages_filepath)
         @before_usages = YAML.load_file(@before_usages_filepath)
       else
