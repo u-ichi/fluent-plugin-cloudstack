@@ -20,7 +20,7 @@ module Fluent
     config_param :tag,         :default => "cloudstack"
     config_param :ssl,         :default => true
     config_param :debug_mode,  :default => false
-    config_param :log_dir,     :default => '/var/log/td_agent'
+    config_param :log_dir,     :default => '/var/log/td-agent'
     config_param :interval,    :default => INTERVAL_MIN
 
     attr_writer :before_events
