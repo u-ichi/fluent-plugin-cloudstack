@@ -158,6 +158,8 @@ module Fluent
 
       if volumes
         volumes.each do |volume|
+          next if volume["state"] == 'Expunging'
+
           case volume["type"]
           when "ROOT"
             root_volume_sum += volume["size"]
