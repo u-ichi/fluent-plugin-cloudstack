@@ -10,8 +10,8 @@ module Fluent
     INTERVAL_MIN = 300
 
     config_param :host
-    config_param :apikey
-    config_param :secretkey
+    config_param :apikey, :secret => true
+    config_param :secretkey, :secret => true
 
     config_param :path,        :default => '/client/api'
     config_param :protocol,    :default => 'https'
