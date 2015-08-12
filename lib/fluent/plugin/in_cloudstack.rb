@@ -98,16 +98,16 @@ module Fluent
       new_events = get_new_events
       new_events.each do |event|
         time = Time.parse(event["created"]).to_i
-        Engine.emit(@event_output_tag, time, event)
+        router.emit(@event_output_tag, time, event)
       end
 
-      Engine.emit("#{@usages_output_tag}", Engine.now, {"events_flow" => new_events.size})
+      router.emit("#{@usages_output_tag}", Engine.now, {"events_flow" => new_events.size})
     end
 
     def emit_usages
       usages = get_usages
 
-      Engine.emit("#{@usages_output_tag}", Engine.now, get_usages)
+      router.emit("#{@usages_output_tag}", Engine.now, get_usages)
     end
 
     def get_new_events
