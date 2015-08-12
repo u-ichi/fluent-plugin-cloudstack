@@ -6,6 +6,10 @@ module Fluent
     unless method_defined?(:log)
       define_method("log") { $log }
     end
+    # To support Fluentd v0.10.57 or earlier
+    unless method_defined?(:router)
+      define_method("router") { Fluent::Engine }
+    end
 
     INTERVAL_MIN = 300
 
